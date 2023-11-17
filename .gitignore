@@ -32,3 +32,9 @@ package-lock.json
 pnpm-lock.yaml
 
 .history
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
