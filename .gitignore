@@ -38,3 +38,6 @@ pnpm-lock.yaml
 *.iws
 *.iml
 *.ipr
+
+### Project ###
+target/
