@@ -1,0 +1,162 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.sunny</groupId>
+        <artifactId>view</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>sunny-view-backend</artifactId>
+    <packaging>jar</packaging>
+
+    <properties>
+        <static.resource.build.directory>${basedir}/dist-pro/</static.resource.build.directory>
+        <static.resource.output.directory>${project.parent.basedir}/../public/admin/</static.resource.output.directory>
+        <!--<static.resource.output.directory>${basedir}/src/main/resources/static/backend/</static.resource.output.directory>-->
+    </properties>
+
+    <build>
+        <plugins>
+            <!--clean插件-->
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-clean-plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>${maven-clean-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>clean-compile-history-resources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                            <failOnError>false</failOnError>
+                            <!--<verbose>true</verbose>-->
+                            <filesets>
+                                <fileset>
+                                    <directory>${static.resource.build.directory}</directory>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                    <followSymlinks>false</followSymlinks>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>clean-original-static-resources</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                            <failOnError>false</failOnError>
+                            <!--<verbose>true</verbose>-->
+                            <filesets>
+                                <fileset>
+                                    <directory>${static.resource.output.directory}</directory>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                    <followSymlinks>false</followSymlinks>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- frontend-maven-plugin为项目本地下载/安装Node和NPM，运行npm install命令 -->
+            <!-- https://github.com/eirslett/frontend-maven-plugin -->
+            <!-- https://mvnrepository.com/artifact/com.github.eirslett/frontend-maven-plugin -->
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>${frontend-maven-plugin.version}</version>
+                <configuration>
+                    <!-- node 和 npm 版本号配置 -->
+                    <nodeVersion>${node-maven-plugin.version}</nodeVersion>
+                    <npmVersion>${npm-maven-plugin.version}</npmVersion>
+                    <yarnVersion>${yarn-maven-plugin.version}</yarnVersion>
+                    <pnpmVersion>${pnpm-maven-plugin.version}</pnpmVersion>
+                    <!-- 设置镜像地址-->
+                    <nodeDownloadRoot>https://npm.taobao.org/mirrors/node/</nodeDownloadRoot>
+                    <!--<npmDownloadRoot>https://registry.npm.taobao.org/npm/-/</npmDownloadRoot>-->
+                    <npmDownloadRoot>https://registry.npmmirror.com/-/</npmDownloadRoot>
+                    <!-- 安装目录 -->
+                    <installDirectory>target</installDirectory>
+                    <!--<workingDirectory>${basedir}</workingDirectory>-->
+                    <pnpmInheritsProxyConfigFromMaven>true</pnpmInheritsProxyConfigFromMaven>
+                    <!--<testFailureIgnore>true</testFailureIgnore>-->
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>install node and pnpm</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>install-node-and-pnpm</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>install</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>pnpm</goal>
+                        </goals>
+                        <configuration>
+                            <!--<arguments>install &#45;&#45;ignore-scripts</arguments>-->
+                            <arguments>install</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>build</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>pnpm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>run build:prod</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--资源插件，主要为了从前端项目里复制打包好的文件到springboot项目-->
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-resources-plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>copy-static-resources</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${static.resource.output.directory}</outputDirectory>
+                            <overwrite>true</overwrite>
+                            <resources>
+                                <resource>
+                                    <directory>${static.resource.build.directory}</directory>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>
