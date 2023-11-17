@@ -13,7 +13,7 @@
     <packaging>jar</packaging>
 
     <properties>
-        <static.resource.build.directory>${basedir}/dist-pro/</static.resource.build.directory>
+        <static.resource.build.directory>${basedir}/dist/</static.resource.build.directory>
         <static.resource.output.directory>${project.parent.basedir}/../public/admin/</static.resource.output.directory>
         <!--<static.resource.output.directory>${basedir}/src/main/resources/static/backend/</static.resource.output.directory>-->
     </properties>
